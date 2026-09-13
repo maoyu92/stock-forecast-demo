@@ -1,0 +1,34 @@
+services:
+  backend:
+    build: ./backend
+    container_name: stock-fc-backend
+    restart: unless-stopped
+    environment:
+      # 推理模式: auto | remote | local | mock
+      - INFERENCE_MODE=${INFERENCE_MODE:-auto}
+      - DATABASE_PATH=/app/data/stock_forecast.db
+      # 本地历史K线仓库（通达信式选股）：同步并发数 / 可选通达信本地 vipdoc 目录
+      - SYNC_WORKERS=${SYNC_WORKERS:-4}
+      - TDX_VIPDOC_PATH=${TDX_VIPDOC_PATH:-}
+      # 远程 GPU 推理（局域网 TimesFM 服务器）
+      - TIMESFM_SSH_HOST=${TIMESFM_SSH_HOST:-192.168.0.109}
+      - TIMESFM_SSH_PORT=${TIMESFM_SSH_PORT:-22}
+      - TIMESFM_SSH_USER=${TIMESFM_SSH_USER:-root}
+      - TIMESFM_SSH_KEY_PATH=/app/ssh/id_ed25519
+      - TIMESFM_REMOTE_DIR=${TIMESFM_REMOTE_DIR:-/data/work/timesfm-3/stock_worker}
+      - TIMESFM_REMOTE_PYTHON=${TIMESFM_REMOTE_PYTHON:-/data/work/timesfm-3/.venv/bin/python}
+    volumes:
+      - ./data:/app/data
+      # 远程模式需要 SSH 私钥所在目录（只读挂载；仅 mock 模式可删除此行）
+      - ${TIMESFM_SSH_DIR:-~/.ssh}:/app/ssh:ro
+    ports:
+      - "8000:8000"
+
+  frontend:
+    build: ./frontend
+    container_name: stock-fc-frontend
+    restart: unless-stopped
+    depends_on:
+      - backend
+    ports:
+      - "8080:80"

@@ -16,6 +16,14 @@ ENV/
 *.db
 *.sqlite
 *.sqlite3
+data/
+
+# 环境变量（含密钥路径等）
+.env
+
+# 前端
+node_modules/
+frontend/dist/
 
 # OS
 .DS_Store
@@ -29,6 +37,16 @@ Thumbs.db
 
 # Logs
 *.log
+
+# 前端构建产物
+*.tsbuildinfo
+
+# 工具/插件工作目录
+.v2c/
+.video_agent/
+
+# 研究用数据缓存
+research/solver_backtest/cache/
 
 # Model cache
 *.bin

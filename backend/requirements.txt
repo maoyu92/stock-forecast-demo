@@ -1,0 +1,8 @@
+fastapi>=0.115
+uvicorn[standard]>=0.30
+pydantic>=2.8
+baostock>=0.8.9
+akshare>=1.14
+pandas>=2.0
+numpy>=1.26
+paramiko>=3.4
